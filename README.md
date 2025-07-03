@@ -13,10 +13,12 @@ Bu proje, Entity Framework Core'un Global Query Filter özelliğini kullanarak �
 
 ### Multi-Tenant Yapı
 
+- `ITenantEntity` arayüzü ile tenant-aware entity'ler işaretlenir
 - `UserContext` sınıfı ile her request için tenant bilgisi saklanır
 - `TenantMiddleware` ile request header'dan X-Tenant-Id alınıp UserContext'e aktarılır
-- AppDbContext'te global query filter ile otomatik tenant filtreleme yapılır
-- Tüm sorgular otomatik olarak mevcut tenant'a göre filtrelenir
+- Reflection kullanılarak tüm `ITenantEntity` implementasyonları için otomatik global query filter eklenir
+- Yeni entity'ler eklenirken sadece `ITenantEntity` arayüzünü uygulamaları yeterlidir, başka bir kod değişikliği gerekmez
+- `SaveChanges` ve `SaveChangesAsync` override edilerek yeni eklenen entity'lere otomatik TenantId ataması yapılır
 
 ### API Endpoints
 
