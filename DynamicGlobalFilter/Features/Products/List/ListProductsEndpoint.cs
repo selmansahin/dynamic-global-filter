@@ -13,6 +13,7 @@ public class ListProductsRequest
 public class ListProductsResponse
 {
     public List<ProductDto> Products { get; set; } = new();
+    public string Query { get; set; }
 }
 
 public class ProductDto
@@ -46,6 +47,8 @@ public class ListProductsEndpoint : Endpoint<ListProductsRequest, ListProductsRe
 
     public override async Task HandleAsync(ListProductsRequest req, CancellationToken ct)
     {
+        var query = _dbContext.Products.ToQueryString();
+        
         // Global filter sayesinde otomatik olarak sadece mevcut tenant'a ait ürünler gelecek
         var products = await _dbContext.Products
             .AsNoTracking()
@@ -60,7 +63,8 @@ public class ListProductsEndpoint : Endpoint<ListProductsRequest, ListProductsRe
 
         await SendAsync(new ListProductsResponse
         {
-            Products = products
+            Products = products,
+            Query = query
         }, cancellation: ct);
     }
 }
